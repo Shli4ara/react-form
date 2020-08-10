@@ -20,12 +20,13 @@ class App extends Component {
 
         this.onShowModal = this.onShowModal.bind(this);
         this.onChangeInput = this.onChangeInput.bind(this);
+        this.onClearState = this.onClearState.bind(this);
 
         this.state = {
             inputForm: false,
             resultForm: false,
             fioUser: "",
-            ageUser: 0,
+            ageUser: "",
         }
     }
 
@@ -41,24 +42,50 @@ class App extends Component {
     }
 
     onChangeInput(type, event) {
+        let correctValue;
+
+        switch(type) {
+            case 'fioUser':
+                correctValue = event.target.value.replace(/[^a-zA-Zа-яА-Я\s-+()]/gi, "").replace(/\s{2,}/g, " ").replace(/^\s+/, "");
+            break;
+            case 'ageUser':
+                correctValue = +event.target.value.replace(/[^0-9]/gi, "").substr(0, 2);
+            break;
+        }
+
         const state = this.state;
-        state[type] = event.target.value;
+        state[type] = correctValue;
         this.setState(state);
     }
 
     inputForm() {
+        let disableButton = "";
+
+        if (!this.state.fioUser.length || this.state.ageUser == 0) {
+            disableButton = "disable";
+        };
+
         return (
             <div className={"modal-form"}>
                 <form>
                     <p>Нам нужны Ваши данные!</p>
 
                     <input placeholder="Введите ФИО" value={this.state.fioUser} onChange={this.onChangeInput.bind(this, "fioUser")} type="text" />
-                    <input placeholder="Введите возраст" value={this.state.ageUser} onChange={this.onChangeInput.bind(this, "ageUser")} type="number" />
+                    <input placeholder="Введите возраст" value={this.state.ageUser} onChange={this.onChangeInput.bind(this, "ageUser")} type="text" />
 
-                    <button onClick={this.onShowModal.bind(this, "resultForm")}>Расчет</button>
+                    <button disabled={disableButton} className={disableButton ? "disable" : ""} onClick={this.onShowModal.bind(this, "resultForm")}>Расчет</button>
                 </form>
             </div>
         );
+    }
+
+    onClearState() {
+        this.setState({
+            inputForm: false,
+            resultForm: false,
+            fioUser: "",
+            ageUser: "",
+        })
     }
 
     resultForm() {
@@ -67,10 +94,10 @@ class App extends Component {
         }
 
         return (
-            <div className={"modal-form"}>
+            <div className={"modal-form result-form"}>
                 <p>Тебе {this.state.ageUser*2} лет!</p>
 
-                <button onClick={this.onShowModal.bind(this, "resultForm")}>Закрыть</button>
+                <button onClick={this.onClearState}>Закрыть</button>
             </div>
         );
     }
