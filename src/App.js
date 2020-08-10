@@ -50,6 +50,8 @@ class App extends Component {
         return (
             <div className={"modal-form"}>
                 <form>
+                    <p>Нам нужны Ваши данные!</p>
+
                     <input placeholder="Введите ФИО" value={this.state.fioUser} onChange={this.onChangeInput.bind(this, "fioUser")} type="text" />
                     <input placeholder="Введите возраст" value={this.state.ageUser} onChange={this.onChangeInput.bind(this, "ageUser")} type="number" />
 
